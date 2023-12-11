@@ -1,11 +1,16 @@
-# import app.model
+import app.model
 from app import app
-from app.database import async_db, create_table
+from app.database import create_db_and_tables
+from app.router import api_v1
+
 
 
 # create_table()
 
-@app.get("/")
+app.include_router(api_v1, prefix='/v1')
+
+@app.get("/test")
 async def index():
     # await async_db.connect()
-    return "Hello world"    
+    create_db_and_tables()
+    return "Hello world"
