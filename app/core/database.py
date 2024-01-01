@@ -2,7 +2,6 @@ import os
 
 from sqlmodel import SQLModel, create_engine
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -17,7 +16,6 @@ DATABASE_URL = f"postgresql+asyncpg://{DB_USER}:{DB_PASSWORD}@{SERVER}:{PORT}/{D
 
 async_engine = create_async_engine(DATABASE_URL)
 async_session = async_sessionmaker(async_engine)
-Base = declarative_base()
 
 
 async def get_async_db():
@@ -30,8 +28,10 @@ async def get_async_db():
 
 # async_db = Database(DATABASE_URL) // Version of SQLAlchemy is not support with sqlModel
 
-engine = create_engine(DATABASE_URL, echo=True)
+# SQLAlchemy setup using SQLModel
+DATABASE_URL_SYNC = f"postgresql://{DB_USER}:{DB_PASSWORD}@{SERVER}:{PORT}/{DB_NAME}"       
+sqlmodel_engine = create_engine(DATABASE_URL_SYNC, echo=True)
 
 
-async def create_db_and_tables():
-    await SQLModel.metadata.create_all(engine)
+def create_db_and_tables():
+    SQLModel.metadata.create_all(bind=sqlmodel_engine)
